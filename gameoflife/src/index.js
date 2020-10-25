@@ -21,7 +21,7 @@ class Box extends React.Component {
 
 class Grid extends React.Component {
   render() {
-    const width = this.props.cols * 14;
+    const width = this.props.cols * 16;
     var rowsArr = [];
 
     var boxClass = "";
@@ -65,6 +65,17 @@ class Main extends React.Component {
     }
 
   }
+
+  selectBox = (row, col) => {
+    let gridCopy = arrayClone(this.state.gridFull);
+    gridCopy[row][col] = !gridCopy[row][col];
+    this.setState({
+      gridFull: gridCopy
+    })
+
+  }
+
+
   render() {
     return (
       <div>
@@ -82,6 +93,10 @@ class Main extends React.Component {
     );
 
   }
+}
+
+function arrayClone(arr) {
+  return JSON.parse(JSON.stringify(arr))
 }
 
 
