@@ -11,7 +11,7 @@ class Box extends React.Component {
   render() {
     return (
       <div
-        className={this.props.boxClass}
+        className={`${this.props.boxClass}`}
         id={this.props.id}
         onClick={this.selectBox}
       />
@@ -22,7 +22,7 @@ class Box extends React.Component {
 
 class Grid extends React.Component {
   render() {
-    const width = this.props.cols * 16;
+    const width = this.props.cols * 14;
     var rowsArr = [];
 
     var boxClass = "";
@@ -30,6 +30,7 @@ class Grid extends React.Component {
       for (var j = 0; j < this.props.cols; j++) {
         let boxId = i + "_" + j;
         boxClass = this.props.gridFull[i][j] ? "box on" : "box off";
+
         rowsArr.push(
           <Box
             boxClass={boxClass}
@@ -62,7 +63,7 @@ class Buttons extends React.Component {
   render() {
     return (
       <div className="center">
-        <ButtonToolbar>
+        <ButtonToolbar class="btn-toolbar">
           <button className="btn btn-default" onClick={this.props.playButton}>
             Play
 					</button>
@@ -73,22 +74,28 @@ class Buttons extends React.Component {
             Clear
 					</button>
           <button className="btn btn-default" onClick={this.props.slow}>
-            Slow
+            -1.25
 					</button>
           <button className="btn btn-default" onClick={this.props.fast}>
-            Fast
+            +1.25
 					</button>
           <button className="btn btn-default" onClick={this.props.seed}>
-            Seed
+            Random
+					</button>
+          <button className="btn btn-default" onClick={this.props.configOne}>
+            configOne
+					</button>
+          <button className="btn btn-default" onClick={this.props.configTwo}>
+            configTwo
 					</button>
           <DropdownButton
             title="Grid Size"
             id="size-menu"
             onSelect={this.handleSelect}
           >
-            <Dropdown.Item eventKey="1">20x10</Dropdown.Item>
-            <Dropdown.Item eventKey="2">50x30</Dropdown.Item>
-            <Dropdown.Item eventKey="3">70x50</Dropdown.Item>
+            <Dropdown.Item eventKey="1" className="btn btn-default">20x10</Dropdown.Item>
+            <Dropdown.Item eventKey="2" className="btn btn-default">50x30</Dropdown.Item>
+            <Dropdown.Item eventKey="3" className="btn btn-default">70x50</Dropdown.Item>
           </DropdownButton>
         </ButtonToolbar>
       </div>
@@ -116,6 +123,7 @@ class Main extends React.Component {
     this.setState({
       gridFull: gridCopy
     });
+    console.log(gridCopy[row][col])
   }
 
   seed = () => {
@@ -131,6 +139,79 @@ class Main extends React.Component {
       gridFull: gridCopy
     });
   }
+
+  configOne = () => {
+    let gridCopy = arrayClone(this.state.gridFull);
+    const middleY = Math.floor(this.rows / 2);
+    const middleX = Math.floor(this.cols / 2);
+    for (let i = 0; i < this.rows; i++) {
+      for (let j = 0; j < this.cols; j++) {
+        if ((j === middleX && i === middleY) ||
+          (j === middleX + 1 && i === middleY) ||
+          (j === middleX - 1 && i === middleY) ||
+          (j === middleX && i === middleY - 1) ||
+          (j === middleX + 1 && i === middleY - 1) ||
+          (j === middleX + 2 && i === middleY - 1)) {
+          gridCopy[i][j] = true;
+        }
+        else {
+          gridCopy[i][j] = false;
+        }
+      }
+    }
+    this.setState({
+      gridFull: gridCopy
+    });
+
+  }
+
+
+  configTwo = () => {
+    let gridCopy = arrayClone(this.state.gridFull);
+    const middleY = Math.floor(this.rows / 3);
+    const middleX = Math.floor(this.cols / 3);
+    for (let i = 0; i < this.rows; i++) {
+      for (let j = 0; j < this.cols; j++) {
+        if ((j === middleX && i === middleY) ||
+          (j === middleX + 1 && i === middleY) ||
+          (j === middleX < 1 && i === middleY) ||
+          (j === middleX + 1 && i === middleY - 1)) {
+
+          gridCopy[i][j] = true;
+        }
+        else {
+          gridCopy[i][j] = false;
+        }
+      }
+    }
+    this.setState({
+      gridFull: gridCopy
+    });
+
+  }
+
+  // configTwo = () => {
+  //   let gridCopy = arrayClone(this.state.gridFull);
+  //   const middleY = Math.floor(this.rows / 4);
+  //   const middleX = Math.floor(this.cols / 4);
+  //   for (let i = 0; i < this.rows; i++) {
+  //     for (let j = 0; j < this.cols; j++) {
+  //       if ((j > middleX && i < middleY)) {
+  //         gridCopy[i][j] = true;
+  //       }
+  //       else {
+  //         gridCopy[i][j] = false;
+  //       }
+  //     }
+  //   }
+  //   this.setState({
+  //     gridFull: gridCopy
+  //   });
+
+  // }
+
+
+
 
   playButton = () => {
     clearInterval(this.intervalId)
@@ -218,6 +299,8 @@ class Main extends React.Component {
           fast={this.fast}
           clear={this.clear}
           seed={this.seed}
+          configOne={this.configOne}
+          configTwo={this.configTwo}
           gridSize={this.gridSize}
         />
         <Grid
@@ -228,6 +311,11 @@ class Main extends React.Component {
 
         />
         <h2>Generations: {this.state.generation}</h2>
+        <h3> These are the rules to game of life: </h3>
+        <a href={"https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life"}>Rules of Game of life</a>
+
+
+
 
       </div >
     );
